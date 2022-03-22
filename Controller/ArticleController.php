@@ -27,22 +27,26 @@ class ArticleController
         $query = "SELECT * FROM articles";
         $result = $this->databaseManager->connection->query($query); //returns PDOStatement object
 
-        // Note: you might want to use a re-usable databaseManager class - the choice is yours
-        // fetch all articles as $rawArticles (as a simple array)
-
         $rawArticles = $result->fetchAll(PDO::FETCH_ASSOC); //turning PDOStatement into array
         
         $articles = [];
         foreach ($rawArticles as $rawArticle) {
             // We are converting an article from a "dumb" array to a much more flexible class
-            $articles[] = new Article($rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date']);
+            $articles[] = new Article($rawArticle['id'], $rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['image']);
         }
-
+        pre_r($articles);
         return $articles;
     }
 
-    public function show()
+    public function show($id)
     {
-        // TODO: this can be used for a detail page
+        // this can be used for a detail page
+        $query = "SELECT * FROM `articles` WHERE id= {$id}";
+        $showMoreQuery = $this->databaseManager->connection->query($query);
+
+        $rawArticle = $showMoreQuery->fetch(PDO::FETCH_ASSOC);
+        $article = new Article($rawArticle['id'], $rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['image']);
+        pre_r($article);
+        require 'View/articles/show.php';
     }
 }

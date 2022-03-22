@@ -39,14 +39,24 @@ class ArticleController
     }
 
     public function show($id)
-    {
+    {   
+        $previousQuery = "SELECT * FROM articles WHERE Id < {$id} ORDER BY Id DESC LIMIT 1";
+        $previous = $this->databaseManager->connection->query($previousQuery);
+        $preArticle = $previous->fetch(PDO::FETCH_ASSOC);
+        $previousArticle = $preArticle['id'];
+        
+        $nextQuery = "SELECT * FROM articles WHERE Id > {$id} ORDER BY Id DESC LIMIT 1";
+        $next = $this->databaseManager->connection->query($nextQuery);
+        $nxtArticle = $next->fetch(PDO::FETCH_ASSOC);
+        $nextArticle = $nxtArticle['id'];
+        
         // this can be used for a detail page
         $query = "SELECT * FROM `articles` WHERE id= {$id}";
         $showMoreQuery = $this->databaseManager->connection->query($query);
 
         $rawArticle = $showMoreQuery->fetch(PDO::FETCH_ASSOC);
         $article = new Article($rawArticle['id'], $rawArticle['title'], $rawArticle['description'], $rawArticle['publish_date'], $rawArticle['image']);
-        pre_r($article);
+        // pre_r($article);
         require 'View/articles/show.php';
     }
 }

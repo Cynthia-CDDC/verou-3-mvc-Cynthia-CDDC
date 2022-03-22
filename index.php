@@ -39,7 +39,7 @@ switch ($page) {
         (new ArticleController($databaseManager))->index();
         break;
     case 'show':
-        (new ArticleController($databaseManager))->show($_GET['id']);
+        (new ArticleController($databaseManager))->show($_GET['id'], $_GET['author']);
         break;
     case 'home':
     default:
